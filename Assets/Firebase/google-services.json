@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "994449946165",
+    "project_id": "myproject-c3ab8",
+    "storage_bucket": "myproject-c3ab8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994449946165:android:c214fbf3f71e3b7e5ce37c",
+        "android_client_info": {
+          "package_name": "com.therungji.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPOqw3-X72pa0k1o2fKBNpzayGBb9U-eI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
