@@ -12,7 +12,12 @@
           "package_name": "com.therungji.myapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "994449946165-1o83tu2g77ktko179i9kbpshbdi1fje5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBPOqw3-X72pa0k1o2fKBNpzayGBb9U-eI"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "994449946165-1o83tu2g77ktko179i9kbpshbdi1fje5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "994449946165-q283p35g0lbq4l2gpdk6rjlq27cbmmr8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.therungji.myapp"
+              }
+            }
+          ]
         }
       }
     }
