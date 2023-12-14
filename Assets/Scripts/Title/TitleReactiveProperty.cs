@@ -1,6 +1,6 @@
 using UniRx;
 
-namespace Title
+namespace Playground.Title
 {
     public enum TitleStep
     {

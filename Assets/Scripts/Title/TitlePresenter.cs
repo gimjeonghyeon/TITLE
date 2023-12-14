@@ -2,14 +2,19 @@ using System;
 using UniRx;
 using UnityEngine;
 
-namespace Title
+namespace Playground.Title
 {
     public class TitlePresenter : MonoBehaviour
     {
         #region Private
+
+        [SerializeField] private InitializePresenter _initializePresenter;
+        [SerializeField] private LoginPresenter _loginPresenter;
+        
         private readonly TitleModel _model = new();
         
         private TitleView _view;
+        
         #endregion
 
         private void Awake() => _view = GetComponent<TitleView>();
@@ -24,30 +29,36 @@ namespace Title
             
             _model.Step
                 .Where(step => step == TitleStep.Initialize)
+                .Do(_ => Debug.Log("Initialize"))
                 .Delay(TimeSpan.FromSeconds(_model.DelaySecond))
+                .SelectMany(_ => _initializePresenter.Execute())
                 .Subscribe(_ => _model.UpdateStep(TitleStep.Login))
                 .AddTo(this);
         
             _model.Step
                 .Where(step => step == TitleStep.Login)
-                .Delay(TimeSpan.FromSeconds(_model.DelaySecond))
+                .Do(_ => Debug.Log("Login"))
+                .SelectMany(_ => _loginPresenter.Execute())
                 .Subscribe(_ => _model.UpdateStep(TitleStep.Update))
                 .AddTo(this);
         
             _model.Step
                 .Where(step => step == TitleStep.Update)
+                .Do(_ => Debug.Log("Update"))
                 .Delay(TimeSpan.FromSeconds(_model.DelaySecond))
                 .Subscribe(_ => _model.UpdateStep(TitleStep.Download))
                 .AddTo(this);
         
             _model.Step
                 .Where(step => step == TitleStep.Download)
+                .Do(_ => Debug.Log("Download"))
                 .Delay(TimeSpan.FromSeconds(_model.DelaySecond))
                 .Subscribe(_ => _model.UpdateStep(TitleStep.Complete))
                 .AddTo(this);
         
             _model.Step
                 .Where(step => step == TitleStep.Complete)
+                .Do(_ => Debug.Log("Complete"))
                 .Delay(TimeSpan.FromSeconds(_model.DelaySecond))
                 .Subscribe(_ => { /* 씬 전환 */ })
                 .AddTo(this);
