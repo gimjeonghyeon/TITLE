@@ -25,7 +25,9 @@ https://github.com/googlesamples/google-signin-unity
         - SHA256 추가로 입력
         
         [Unity Firebase Google SignIn Error Help](https://discussions.unity.com/t/unity-firebase-google-signin-error-help/252175)
-        
+      
+    - keystore 및 Firebase 프로젝트 재생성후 SHA1만 추가한 뒤 google-services.json 파일 및 `WEB_CLIENT_ID` 교체 (성공)
+        - 이전에 사용하던 Firebase 프로젝트를 사용해서 SHA1 중복 에러 발생 등 google-services.json의 설정 값들이 제대로 되어있지 않았던 것으로 보임.
 
 ## Firebase 인증 구현
 
