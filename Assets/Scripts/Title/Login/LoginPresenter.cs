@@ -1,7 +1,9 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Playground.Firebase;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Networking;
 using Zenject;
 
 namespace Playground.Title
@@ -50,6 +52,10 @@ namespace Playground.Title
                         onNext: result =>
                         {
                             _userInfoManager.SetUserInfo(result);
+                            _view.SetButtonActive(false);
+                            _view.SetUserInfo(_userInfoManager.DisplayName, _userInfoManager.Email);
+                            ImageLoad(_userInfoManager.PhotoUrl, sprite => _view.SetUserPhoto(sprite)).Forget();
+                            
                             _model.UpdateStep(LoginStep.Complete);
                         },
                         onError: exception =>
@@ -72,6 +78,26 @@ namespace Playground.Title
 
                 return Disposable.Create(() => _disposable?.Dispose());
             }).ObserveOnMainThread();
+        }
+
+        /// <summary>
+        /// url을 통해 이미지 로드 TODO: 추후 별도 스크립트로 분리
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="onComplete"></param>
+        private async UniTask ImageLoad(Uri url, Action<Sprite> onComplete)
+        {
+            var www = UnityWebRequestTexture.GetTexture(url);
+
+            await www.SendWebRequest().AsObservable();
+
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                var texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+                var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2());
+
+                onComplete?.Invoke(sprite);
+            }
         }
     }
 }
