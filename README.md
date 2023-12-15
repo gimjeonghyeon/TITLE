@@ -1,7 +1,5 @@
 # Google 로그인 인증 사용하기
 
----
-
 ## Google 로그인 구현
 
 https://github.com/googlesamples/google-signin-unity
@@ -56,8 +54,6 @@ auth.SignInAndRetrieveDataWithCredentialAsync(credential).ContinueWith(task => {
 ```
 
 # SHA-1, SHA256 지문 알아내기
-
----
 
 1. jre 설치 여부 확인
     1. 미설치 되었다면 설치 진행 ([다운로드)](https://www.java.com/ko/download/)
