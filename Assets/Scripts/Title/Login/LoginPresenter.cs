@@ -1,6 +1,5 @@
 using System;
-using System.Threading.Tasks;
-using Firebase.Auth;
+using Playground.Firebase;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -11,8 +10,10 @@ namespace Playground.Title
     {
         #region Private
 
+        [Inject] private readonly ApplicationManager _applicationManager;
+        [Inject] private readonly FirebaseManager _firebaseManager;
         [Inject] private readonly UserInfoManager _userInfoManager;
-        
+
         private readonly LoginModel _model = new ();
         
         private LoginView _view;
@@ -43,8 +44,20 @@ namespace Playground.Title
                 _model.Step
                     .Where(step => step == LoginStep.SignIn)
                     .Do(_ => Debug.Log("SignIn"))
-                    .SelectMany(_ => SignIn().ToObservable())
-                    .Subscribe(_ => {})
+                    .SelectMany(_ => _firebaseManager.GoogleSignInAsObservable(_model.GoogleIdToken, null))
+                    .Subscribe
+                    (
+                        onNext: result =>
+                        {
+                            _userInfoManager.SetUserInfo(result);
+                            _model.UpdateStep(LoginStep.Complete);
+                        },
+                        onError: exception =>
+                        {
+                            Debug.Log(exception.Message);
+                            _applicationManager.Restart();
+                        }
+                    )
                     .AddTo(this);
             
                 _model.Step
@@ -58,42 +71,7 @@ namespace Playground.Title
                     });
 
                 return Disposable.Create(() => _disposable?.Dispose());
-            });
-        }
-
-        /// <summary>
-        /// 구글 로그인 진행
-        /// </summary>
-        private async Task SignIn()
-        {
-            var credential = GoogleAuthProvider.GetCredential(_model.GoogleIdToken, null);
-            
-            await FirebaseAuth.DefaultInstance.SignInWithCredentialAsync(credential).ContinueWith(task =>
-            {
-                if (task.IsCanceled)
-                {
-                    // TODO: 로그인중 취소에 대한 처리
-                    
-                    _model.UpdateStep(LoginStep.None);
-                }
-                else if (task.IsFaulted)
-                {
-                    // TODO: 로그인중 실패에 대한 처리
-
-                    if (task.Exception != null)
-                    {
-                        Debug.Log($"Sing In Error : {task.Exception.Message}");
-                    }
-                    
-                    _model.UpdateStep(LoginStep.None);
-                }
-                else if (task.IsCompleted)
-                {
-                    _userInfoManager.SetUserInfo(task.Result);
-                    _model.UpdateStep(LoginStep.Complete);
-                }
-            });
+            }).ObserveOnMainThread();
         }
     }
-
 }

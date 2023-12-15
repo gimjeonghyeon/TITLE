@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Firebase;
+using Playground.Firebase;
 using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Playground.Title
 {
@@ -10,6 +10,8 @@ namespace Playground.Title
     {
         #region Private
 
+        [Inject] private readonly FirebaseManager _firebaseManager;
+        
         private readonly InitializeModel _model = new ();
 
         private CompositeDisposable _disposable;
@@ -24,15 +26,27 @@ namespace Playground.Title
         {
             return Observable.Create<Unit>(observer =>
             {
+                Debug.Log($"_firebaseManager = {_firebaseManager}");
+                
                 _disposable = new();
                 
                 _model.UpdateStep(InitializeStep.FirebaseInitialize);
-                
+
                 _model.Step
                     .Where(step => step == InitializeStep.FirebaseInitialize)
                     .Do(_ => Debug.Log("FirebaseInitialize"))
-                    .SelectMany(_ => InitializeFirebase().ToObservable())
-                    .Subscribe(_ => {})
+                    .SelectMany(_ => _firebaseManager.CheckAndFixDependenciesAsObservable())
+                    .Subscribe
+                    (
+                        onNext: _ =>
+                        {
+                            _model.UpdateStep(InitializeStep.Complete);
+                        },
+                        onError: exception =>
+                        {
+                            Debug.Log(exception.Message);
+                        }
+                    )
                     .AddTo(this);
                 
                 _model.Step
@@ -46,26 +60,7 @@ namespace Playground.Title
                     });
 
                 return Disposable.Create(() => _disposable?.Dispose());
-            });
-        }
-
-        /// <summary>
-        /// 파이어베이스 초기화
-        /// </summary>
-        private async Task InitializeFirebase()
-        {
-            await FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
-            {
-                var result = task.Result;
-                if (result == DependencyStatus.Available) 
-                {
-                    _model.UpdateStep(InitializeStep.Complete);
-                } 
-                else 
-                {
-                    Debug.Log($"Could not resolve all Firebase dependencies: {result}");
-                }
-            });
+            }).ObserveOnMainThread();
         }
     }
 }
