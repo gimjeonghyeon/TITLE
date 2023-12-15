@@ -1,5 +1,6 @@
 ﻿using System;
 using Firebase.Auth;
+using UnityEngine;
 
 namespace Playground
 {
@@ -18,6 +19,10 @@ namespace Playground
             UserId = user.UserId;
             DisplayName = user.DisplayName;
             PhotoUrl = user.PhotoUrl;
+            
+            Debug.Log($"user id: {UserId}");
+            Debug.Log($"display name: {DisplayName}");
+            Debug.Log($"photo url: {PhotoUrl}");
         }
     }
 }

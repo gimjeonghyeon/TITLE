@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Firebase;
 using Firebase.Auth;
+using Google;
 using UniRx;
 
 namespace Playground.Firebase
@@ -8,9 +10,12 @@ namespace Playground.Firebase
     public class FirebaseManager
     {
         #region Private
-
+        
+        private readonly SignInModel _signInModel = new();
+        
         private FirebaseApp _app;
         private FirebaseAuth _auth;
+        private GoogleSignInConfiguration _configuration;
         private CompositeDisposable _disposable;
 
         #endregion
@@ -27,6 +32,11 @@ namespace Playground.Firebase
                 
                 _app = FirebaseApp.DefaultInstance;
                 _auth = FirebaseAuth.DefaultInstance;
+                _configuration = new()
+                {
+                    WebClientId = _signInModel.WebClientId, 
+                    RequestIdToken = true
+                };
                 
                 FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
                 {
@@ -49,26 +59,90 @@ namespace Playground.Firebase
         /// <summary>
         /// 구글 로그인
         /// </summary>
-        public IObservable<FirebaseUser> GoogleSignInAsObservable(string googleIdToken, string googleAccessToken)
+        public IObservable<FirebaseUser> GoogleSignInAsObservable()
         {
             return Observable.Create<FirebaseUser>(observer =>
             {
                 _disposable = new();
                 
-                var credential = GoogleAuthProvider.GetCredential(googleIdToken, googleAccessToken);
+                _signInModel.UpdateSignInStep(SignInStep.GOOGLE_SIGN_IN);
+
+                _signInModel.SignInStep
+                    .Where(step => step == SignInStep.GOOGLE_SIGN_IN)
+                    .Subscribe(_ =>
+                    {
+                        GoogleSignIn.Configuration = _configuration;
+                        GoogleSignIn.Configuration.UseGameSignIn = false;
+                        GoogleSignIn.Configuration.RequestIdToken = true;
+
+                        GoogleSignIn.DefaultInstance.SignIn().ContinueWith(task =>
+                        {
+                            if (task.IsFaulted)
+                            {
+                                string message = null;
+
+                                if (task.Exception != null)
+                                {
+                                    using IEnumerator<Exception> enumerator = task.Exception.InnerExceptions.GetEnumerator();
+
+                                    if (enumerator.MoveNext())
+                                    {
+                                        var error = (GoogleSignIn.SignInException)enumerator.Current;
+
+                                        if (error != null)
+                                        {
+                                            message += $"Get Error: {error.Status} {error.Message}\n";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        message += $"Got Unexpected Exception: {task.Exception}";
+                                    }
+                                }
+
+                                observer.OnError(new Exception(message ?? "Sign In Error"));
+                            }
+                            else if (task.IsCanceled)
+                            {
+                                observer.OnError(new Exception("Sign In Cancel"));
+                            }
+                            else if (task.IsCompleted)
+                            {
+                                _signInModel.GoogleIdToken = task.Result.IdToken;
+                                _signInModel.UpdateSignInStep(SignInStep.GOOGLE_SIGN_IN_WITH_CREDENTIAL);
+                            }
+                        });
+                    })
+                    .AddTo(_disposable);
                 
-                _auth.SignInWithCredentialAsync(credential).ContinueWith(task =>
-                {
-                    if (task.IsCanceled || task.IsFaulted)
+
+                _signInModel.SignInStep
+                    .Where(step => step == SignInStep.GOOGLE_SIGN_IN_WITH_CREDENTIAL)
+                    .Subscribe(_ =>
                     {
-                        observer.OnError(task.Exception?? new Exception());
-                    }
-                    else if (task.IsCompleted)
+                        var credential = GoogleAuthProvider.GetCredential(_signInModel.GoogleIdToken, null);
+
+                        _auth.SignInWithCredentialAsync(credential).ContinueWith(task =>
+                        {
+                            if (task.IsCanceled || task.IsFaulted)
+                            {
+                                observer.OnError(task.Exception?? new Exception());
+                            }
+                            else if (task.IsCompleted)
+                            {
+                                observer.OnNext(task.Result);
+                            }
+                        });
+                    })
+                    .AddTo(_disposable);
+
+                _signInModel.SignInStep
+                    .Where(step => step == SignInStep.COMPLETE)
+                    .First()
+                    .Subscribe(_ =>
                     {
-                        observer.OnNext(task.Result);
                         observer.OnCompleted();
-                    }
-                });
+                    });
 
                 return Disposable.Create(() => _disposable?.Dispose());
             }).ObserveOnMainThread();

@@ -44,7 +44,7 @@ namespace Playground.Title
                 _model.Step
                     .Where(step => step == LoginStep.SignIn)
                     .Do(_ => Debug.Log("SignIn"))
-                    .SelectMany(_ => _firebaseManager.GoogleSignInAsObservable(_model.GoogleIdToken, null))
+                    .SelectMany(_ => _firebaseManager.GoogleSignInAsObservable())
                     .Subscribe
                     (
                         onNext: result =>
