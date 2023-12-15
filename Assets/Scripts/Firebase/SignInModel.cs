@@ -4,7 +4,7 @@
     {
         #region Const
 
-        private const string WEB_CLIENT_ID = "994449946165-1o83tu2g77ktko179i9kbpshbdi1fje5.apps.googleusercontent.com";
+        private const string WEB_CLIENT_ID = "581461956940-vemvb0f0geg3j5e23mck15g9hqe62f21.apps.googleusercontent.com";
 
         #endregion
 

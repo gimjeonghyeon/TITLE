@@ -74,6 +74,7 @@ namespace Playground.Firebase
                         GoogleSignIn.Configuration = _configuration;
                         GoogleSignIn.Configuration.UseGameSignIn = false;
                         GoogleSignIn.Configuration.RequestIdToken = true;
+                        GoogleSignIn.Configuration.RequestEmail = true;
 
                         GoogleSignIn.DefaultInstance.SignIn().ContinueWith(task =>
                         {
