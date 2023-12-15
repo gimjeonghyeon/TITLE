@@ -1,10 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_web_client_id">
-  <string name="gcm_defaultSenderId" translatable="false">994449946165</string>
-  <string name="google_storage_bucket" translatable="false">myproject-c3ab8.appspot.com</string>
-  <string name="project_id" translatable="false">myproject-c3ab8</string>
-  <string name="google_api_key" translatable="false">AIzaSyBPOqw3-X72pa0k1o2fKBNpzayGBb9U-eI</string>
-  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBPOqw3-X72pa0k1o2fKBNpzayGBb9U-eI</string>
-  <string name="google_app_id" translatable="false">1:994449946165:android:c214fbf3f71e3b7e5ce37c</string>
-  <string name="default_web_client_id" translatable="false">994449946165-1o83tu2g77ktko179i9kbpshbdi1fje5.apps.googleusercontent.com</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_android_client_id,@string/default_web_client_id">
+  <string name="gcm_defaultSenderId" translatable="false">581461956940</string>
+  <string name="google_storage_bucket" translatable="false">unityplaygroundtitle.appspot.com</string>
+  <string name="project_id" translatable="false">unityplaygroundtitle</string>
+  <string name="google_api_key" translatable="false">AIzaSyB3HcrQthyIyVZ0GPvE2gcnRPyE7a8eiP8</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyB3HcrQthyIyVZ0GPvE2gcnRPyE7a8eiP8</string>
+  <string name="google_app_id" translatable="false">1:581461956940:android:eb463b059bc98c0f3457e9</string>
+  <string name="default_android_client_id" translatable="false">581461956940-gvrgmk7sd0susl2uvucneip52l2ua317.apps.googleusercontent.com</string>
+  <string name="default_web_client_id" translatable="false">581461956940-vemvb0f0geg3j5e23mck15g9hqe62f21.apps.googleusercontent.com</string>
 </resources>
