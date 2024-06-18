@@ -1,4 +1,5 @@
-# Google 로그인 인증 사용하기 (Google Signin, Google Login)
+# Google 로그인 인증 사용하기
+Google Signin, Google Login
 
 ## Google 로그인 구현
 
