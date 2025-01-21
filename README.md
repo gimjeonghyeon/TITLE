@@ -4,8 +4,7 @@ Google Signin, Google Login
 ## Google 로그인 구현
 
 - Firebase Auth을 사용하기 위해선 사용하려는 Provider (Google, Facebook 등)의 로그인이 선행되어야 합니다.
-- 아래 저장소에서 google-signin-unity 패키지를 받아서 import 해줍니다.
--- [google-signin-unity](https://github.com/googlesamples/google-signin-unity)
+- 다음 저장소에서 google-signin-unity 패키지를 받아서 import 해줍니다. [google-signin-unity](https://github.com/googlesamples/google-signin-unity)
 - Google로 로그인 하는 기능을 사용하기 위해서 Google API를 이용해서 로그인한 이후에 idToken값을 얻어올 필요가 있습니다.
 
 ### `The supplied auth credential is malformed or has expired. **Unable to parse Google id_token**`
